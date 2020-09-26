@@ -22,8 +22,11 @@ from meshreg.models import manoutils
 import pickle
 
 
-def to_cpu_npy(tensor):
-    return tensor.detach().cpu().numpy()
+def to_cpu_npy(elem):
+    if isinstance(elem, torch.Tensor):
+        elem = elem.detach().cpu().numpy()
+
+    return elem
 
 
 def main(args):
@@ -71,9 +74,10 @@ def main(args):
         #     render_results, cmap_obj = fastrender.comp_render(
         #         batch, all_results, rotate=True, modes=("all", "obj", "hand"), max_val=args.max_val
         #     )
-        if i > 100:
-            break
-        i += 1
+        
+        # if i > 100:
+        #     break
+        # i += 1
 
         for img_idx, img in enumerate(batch[BaseQueries.IMAGE]):    # Each batch has 4 images
             network_out = all_results[0]
@@ -87,15 +91,18 @@ def main(args):
 
             sample_dict['obj_verts_pred'] = network_out['recov_objverts3d'][img_idx, :, :]
             sample_dict['hand_verts_pred'] = network_out['recov_handverts3d'][img_idx, :, :]
+            # sample_dict['hand_adapt_trans'] = network_out['mano_adapt_trans'][img_idx, :]
             sample_dict['hand_pose'] = network_out['pose'][img_idx, :]
             sample_dict['hand_beta'] = network_out['shape'][img_idx, :]
             sample_dict['side'] = batch[BaseQueries.SIDE][img_idx]
+
+            for k in sample_dict.keys():
+                sample_dict[k] = to_cpu_npy(sample_dict[k])
 
             all_samples.append(sample_dict)
 
             continue
 
-            # sample_dict['hand_translation'] = network_out['recov_handverts3d'][img_idx, :, :]
 
             # obj_verts_gt = samplevis.get_check_none(sample, BaseQueries.OBJVERTS3D, cpu=False)
             # hand_verts_gt = samplevis.get_check_none(sample, BaseQueries.HANDVERTS3D, cpu=False)
@@ -104,8 +111,6 @@ def main(args):
             # obj_faces = samplevis.get_check_none(sample, BaseQueries.OBJFACES, cpu=False).long()
             # hand_faces, _ = manoutils.get_closed_faces()
 
-            for k in sample_dict.keys():
-                sample_dict[k] = to_cpu_npy(sample_dict[k])
 
             # plt.imshow(img)
             # plt.show()

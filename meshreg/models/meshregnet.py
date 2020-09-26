@@ -193,9 +193,10 @@ class MeshRegNet(nn.Module):
             adapt_joints, _ = self.adaptor(mano_results["verts3d"])
             adapt_joints = adapt_joints.transpose(1, 2)
             mano_results["joints3d"] = adapt_joints - adapt_joints[:, self.mano_center_idx].unsqueeze(1)
-            mano_results["verts3d"] = mano_results["verts3d"] - adapt_joints[
-                :, self.mano_center_idx
-            ].unsqueeze(1)
+            mano_results["verts3d"] = mano_results["verts3d"] - adapt_joints[:, self.mano_center_idx].unsqueeze(1)
+
+            mano_results['mano_adapt_trans'] = adapt_joints[:, self.mano_center_idx]  # Save translation
+            # print('Using adaptor', adapt_joints.shape)
         if not no_loss:
             mano_total_loss, mano_losses = self.mano_loss.compute_loss(mano_results, sample)
             if total_loss is None:
@@ -231,6 +232,7 @@ class MeshRegNet(nn.Module):
             mano_results["joints2d"] = proj_joints2d
             mano_results["recov_joints3d"] = recov_joints3d
             mano_results["recov_handverts3d"] = recov_hand_verts3d
+            mano_results["mano_center_trans"] = center3d
             mano_results["verts2d"] = proj_verts2d
             mano_results["hand_pretrans"] = trans
             mano_results["hand_prescale"] = scale
