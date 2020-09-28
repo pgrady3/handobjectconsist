@@ -42,13 +42,16 @@ def main(args):
     # Load models
     models = []
     for resume in args.resumes:
+        print('Resuming', resume)
         opts = reloadmodel.load_opts(resume)
         model, epoch = reloadmodel.reload_model(resume, opts)
         models.append(model)
         freeze.freeze_batchnorm_stats(model)  # Freeze batchnorm
 
-    dataset, input_res = get_dataset.get_dataset(args.dataset, split=args.split, meta={}, mode=args.mode, use_cache=args.use_cache,
+    dataset, input_res = get_dataset.get_dataset(args.dataset, split=args.split, meta={"version": args.version, "split_mode": args.split_mode},
+                                                 mode=args.mode, use_cache=args.use_cache,
                                                  no_augm=True, center_idx=opts["center_idx"], sample_nb=None)
+
     loader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=int(args.workers), drop_last=False,
                                          collate_fn=collate.meshreg_collate)
 
@@ -81,6 +84,8 @@ def main(args):
 
         for img_idx, img in enumerate(batch[BaseQueries.IMAGE]):    # Each batch has 4 images
             network_out = all_results[0]
+            sample_idx = batch['idx'][img_idx]
+            print(dataset.pose_dataset.get_hand_info(sample_idx))
 
             sample_dict = dict()
             # sample_dict['image'] = img
@@ -164,12 +169,14 @@ if __name__ == "__main__":
     parser.add_argument("--manual_seed", default=1, help="Fixed random seed")
 
     # Dataset params
-    parser.add_argument("--dataset", default="fhbhands")
+    parser.add_argument("--dataset", default="ho3dv2")
     parser.add_argument("--split", default="test")
+    parser.add_argument("--version", default=2, type=int, help="Version of HO3D dataset to use")
+    parser.add_argument("--split_mode", default="objects", choices=["objects", "paper"], help="HO3D possible splits, 'paper' for hand baseline, 'objects' for photometric consistency")
     parser.add_argument("--mode", default="full", help="[viz|full], 'viz' for selected dataset samples, 'full' for random ones")
     parser.add_argument("--use_cache", action="store_true")
     parser.add_argument("--max_val", default=0.1, type=float, help="Max value (in meters) for colormap error range")
-    parser.add_argument("--batch_size", default=4, type=int)
+    parser.add_argument("--batch_size", default=8, type=int)
     parser.add_argument("--workers", default=0, type=int)
 
     # Model parameters

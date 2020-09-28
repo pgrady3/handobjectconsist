@@ -97,6 +97,7 @@ class HandObjSet(Dataset):
         if query is None:
             query = self.queries
         sample = {}
+        sample['idx'] = idx
 
         if BaseQueries.IMAGE in query or TransQueries.IMAGE in query:
             center, scale = self.pose_dataset.get_center_scale(idx)
@@ -141,9 +142,10 @@ class HandObjSet(Dataset):
             center = center + center_offsets.astype(int)
 
             # Scale jittering
-            scale_jit = Normal(0, 1).sample().item() + 1
-            scale_jittering = self.scale_jittering * scale_jit
+            scale_jit = Normal(0, 1).sample().item()
+            scale_jittering = self.scale_jittering * scale_jit + 1
             scale_jittering = np.clip(scale_jittering, 1 - self.scale_jittering, 1 + self.scale_jittering)
+            # print('s jit', scale_jit, scale_jittering, self.scale_jittering)
             scale = scale * scale_jittering
 
             rot = Uniform(low=-self.max_rot, high=self.max_rot).sample().item()
@@ -152,6 +154,7 @@ class HandObjSet(Dataset):
         if self.block_rot:
             rot = 0
         space_augm = {"rot": rot, "scale": scale, "center": center}
+        # print('space augm', space_augm)
         sample["space_augm"] = space_augm
         rot_mat = np.array([[np.cos(rot), -np.sin(rot), 0], [np.sin(rot), np.cos(rot), 0], [0, 0, 1]]).astype(
             np.float32
@@ -355,6 +358,7 @@ class HandObjSet(Dataset):
                     img, brightness=bright, saturation=sat, hue=hue, contrast=contrast
                 )
                 sample["color_augm"] = {"sat": sat, "bright": bright, "contrast": contrast, "hue": hue}
+                # print('color aug', sample["color_augm"])
             else:
                 sample["color_augm"] = None
             # Create buffer white image if needed

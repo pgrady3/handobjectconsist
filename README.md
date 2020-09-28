@@ -1,3 +1,12 @@
+## Ideas to improve performance
+* Don't use object split, use paper split `--split_mode paper`
+* `--val_split val`
+* `--scale_jittering 0.1`?
+* `--max_rot 0.2`
+
+Must use `--version 2`
+Splits are very important. Using train/test, they're both actually splits from the train set
+
 ## Export predictions
 
 Data structure shapes
