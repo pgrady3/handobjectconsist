@@ -4,7 +4,9 @@
 * `--scale_jittering 0.1`?
 * `--max_rot 0.2`
 
-Must use `--version 2`
+* Loss weights are different
+
+Must use `--version 2/3?`
 Splits are very important. Using train/test, they're both actually splits from the train set
 
 ## Export predictions

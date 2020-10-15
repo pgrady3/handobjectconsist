@@ -85,7 +85,7 @@ def main(args):
         for img_idx, img in enumerate(batch[BaseQueries.IMAGE]):    # Each batch has 4 images
             network_out = all_results[0]
             sample_idx = batch['idx'][img_idx]
-            print(dataset.pose_dataset.get_hand_info(sample_idx))
+            handpose, handtrans, handshape = dataset.pose_dataset.get_hand_info(sample_idx)
 
             sample_dict = dict()
             # sample_dict['image'] = img
@@ -97,9 +97,13 @@ def main(args):
             sample_dict['obj_verts_pred'] = network_out['recov_objverts3d'][img_idx, :, :]
             sample_dict['hand_verts_pred'] = network_out['recov_handverts3d'][img_idx, :, :]
             # sample_dict['hand_adapt_trans'] = network_out['mano_adapt_trans'][img_idx, :]
-            sample_dict['hand_pose'] = network_out['pose'][img_idx, :]
-            sample_dict['hand_beta'] = network_out['shape'][img_idx, :]
+            sample_dict['hand_pose_pred'] = network_out['pose'][img_idx, :]
+            sample_dict['hand_beta_pred'] = network_out['shape'][img_idx, :]
             sample_dict['side'] = batch[BaseQueries.SIDE][img_idx]
+
+            sample_dict['hand_pose_gt'] = handpose
+            sample_dict['hand_beta_gt'] = handshape
+            sample_dict['hand_trans_gt'] = handtrans
 
             for k in sample_dict.keys():
                 sample_dict[k] = to_cpu_npy(sample_dict[k])
@@ -107,7 +111,6 @@ def main(args):
             all_samples.append(sample_dict)
 
             continue
-
 
             # obj_verts_gt = samplevis.get_check_none(sample, BaseQueries.OBJVERTS3D, cpu=False)
             # hand_verts_gt = samplevis.get_check_none(sample, BaseQueries.HANDVERTS3D, cpu=False)

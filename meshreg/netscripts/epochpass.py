@@ -88,6 +88,7 @@ def epoch_pass(
                 save_dict[loss_name][prefix] = eval_res[met]
     img_filepath = f"{prefix}_epoch{epoch:04d}_eval.png"
     save_img_path = os.path.join(img_folder, img_filepath)
+    print('Saving eval img to', save_img_path)
     # Filter out Nan pck curves
     evaluator_results = {
         eval_name: res for eval_name, res in evaluator_results.items() if res["epe_mean"] == res["epe_mean"]
