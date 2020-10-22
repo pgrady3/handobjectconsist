@@ -104,6 +104,7 @@ def main(args):
             sample_dict['hand_pose_gt'] = handpose
             sample_dict['hand_beta_gt'] = handshape
             sample_dict['hand_trans_gt'] = handtrans
+            sample_dict['hand_extr_gt'] = cam_extr = torch.Tensor([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
 
             for k in sample_dict.keys():
                 sample_dict[k] = to_cpu_npy(sample_dict[k])

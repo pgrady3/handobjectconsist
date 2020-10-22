@@ -43,7 +43,7 @@ def main(args):
     val_dataset, input_size = get_dataset.get_dataset(
         args.val_dataset,
         split=args.val_split,
-        meta={"version": args.version, "split_mode": "paper"},
+        meta={"version": args.version, "split_mode": args.split_mode},
         use_cache=args.use_cache,
         mini_factor=args.mini_factor,
         mode=args.mode,
@@ -104,6 +104,9 @@ if __name__ == "__main__":
     # torch.multiprocessing.set_start_method("forkserver")
     parser = argparse.ArgumentParser()
     parser.add_argument("--com", default="debug/")
+
+    parser.add_argument("--split_mode", default="paper", choices=["objects", "paper"],
+                        help="HO3D possible splits, 'paper' for hand baseline, 'objects' for photometric consistency")
 
     # Dataset params
     parser.add_argument("--val_dataset", choices=["ho3dv2"], default="ho3dv2")

@@ -8,7 +8,8 @@ def load_objects(obj_root):
     object_names = [obj_name for obj_name in os.listdir(obj_root) if ".tgz" not in obj_name]
     objects = {}
     for obj_name in object_names:
-        obj_path = os.path.join(obj_root, obj_name, "textured_simple_2000.obj")
+        # obj_path = os.path.join(obj_root, obj_name, "textured_simple_2000.obj")
+        obj_path = os.path.join(obj_root, obj_name, "textured_simple.obj")  # TODO use full objects
         with open(obj_path) as m_f:
             mesh = meshio.fast_load_obj(m_f)[0]
         objects[obj_name] = {"verts": mesh["vertices"], "faces": mesh["faces"]}

@@ -1,5 +1,12 @@
+## Notes
+* `ho3d_eval.sh` runs `run_all.py` and generates the pickle file needed
+* "Paper" split uses full train/test set. Trainval 0:60k, val 60k:end, train 0:end. Test is full eval set
+* "Object" split mode object makes all splits from training set. Train = trainval + val. Test is separate, but fully annotated
+* I think strong/weak mode refers to her process of cutting out annotations. For my purposes, full is the way to go, as it is the sum of strong and weak. Test this, not sure
+
+
 ## Ideas to improve performance
-* Don't use object split, use paper split `--split_mode paper`
+* Don't use object split, use paper split `--split_mode paper`. 
 * `--val_split val`
 * `--scale_jittering 0.1`?
 * `--max_rot 0.2`
