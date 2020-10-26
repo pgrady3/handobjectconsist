@@ -2,9 +2,10 @@
 #python run_all.py --resumes=releasemodels/ho3dv2/realonly/checkpoint_200.pth --split_mode=paper --split test
 
 # Run my model on OBJECT split so we get GT hands
-python run_all.py --split_mode=objects --split test \
- --resume checkpoints/ho3dv2_train_mini1/2020_10_01/debug/_frac1.0e+00lr5e-05_mom0.9_bs8__lmbeta5.0e-07_lmpr5.0e-05_lmrj3d5.0e-01_lovr3d5.0e-01seed0_fbn/checkpoint.pth
+#python run_all.py --split_mode=objects --split test \
+# --resume checkpoints/ho3dv2_train_mini1/2020_10_01/debug/_frac1.0e+00lr5e-05_mom0.9_bs8__lmbeta5.0e-07_lmpr5.0e-05_lmrj3d5.0e-01_lovr3d5.0e-01seed0_fbn/checkpoint.pth
 
+python evalho3dv2_save.py --resume releasemodels/ho3dv2/realonly/checkpoint_200.pth --val_split test --json_folder jsonres/res
 
 
 
@@ -13,7 +14,7 @@ python run_all.py --split_mode=objects --split test \
 while true; do
     read -p "Do you want to copy generated pkl to other folder?" yn
     case $yn in
-        [Yy]* ) cp all_samples.pkl ../align_hands/dataset/.; break;;
+        [Yy]* ) cp all_samples.pkl ../align_hands/dataset/pose_estimates.pkl; break;;
         [Nn]* ) exit;;
         * ) echo "Please answer yes or no.";;
     esac
